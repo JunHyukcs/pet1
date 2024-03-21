@@ -1,14 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import axios from "axios";
 import {Link} from 'react-router-dom';
+import dayjs from 'dayjs';
+import isLeapYear from 'dayjs/plugin/isLeapYear'; // 윤년 판단 플러그인
+import 'dayjs/locale/ko'; // 한국어 가져오기
+
+dayjs.extend(isLeapYear); // 플러그인 등록
+dayjs.locale('ko'); // 언어 등록
 
 const Products = () => {
     const [products, setProducts] = useState([]);
 
     useEffect(() =>{
-        let url="https://d67ebdd2-1d5f-4a56-b306-cb1b0c92ba51.mock.pstmn.io/products";
+        let url="http://localhost:2080/products";
         axios.get(url).then((result)=>{
-            const products=result.data.products;
+            const products=result.data.product;
             setProducts(products)
         }).catch(error =>{
             console.log(error)
@@ -26,13 +32,14 @@ const Products = () => {
             products.map((product, idx)=>{
                 return(
                     <div className="product-card" key={idx}>
-                            <Link className='product-link' to={`/productpage/${idx}`}> 
+                            <Link className='product-link' to={`/productpage/${product.id}`}> 
                                 <div>
                                     <img src={process.env.PUBLIC_URL + product.imageUrl} alt={product.name} />
                                 </div>
                                 <div className="product-content">
                                     <div className="product-name"><span className='product-seller'>({product.seller})</span> {product.name}</div>
                                     <div className="product-price">{product.price}</div>
+                                    <div className="product-date">{dayjs(product.createdAt).format('YYYY-MM-DD')}</div>
                                     
                                 </div>
                             </Link>
