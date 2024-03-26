@@ -4,6 +4,7 @@ import {Link} from 'react-router-dom';
 import dayjs from 'dayjs';
 import isLeapYear from 'dayjs/plugin/isLeapYear'; // 윤년 판단 플러그인
 import 'dayjs/locale/ko'; // 한국어 가져오기
+import { API_URL } from '../config/constants';
 
 dayjs.extend(isLeapYear); // 플러그인 등록
 dayjs.locale('ko'); // 언어 등록
@@ -12,7 +13,7 @@ const Products = () => {
     const [products, setProducts] = useState([]);
 
     useEffect(() =>{
-        let url="http://localhost:2080/products";
+        let url=`${API_URL}/products`;
         axios.get(url).then((result)=>{
             const products=result.data.product;
             setProducts(products)
@@ -32,9 +33,11 @@ const Products = () => {
             products.map((product, idx)=>{
                 return(
                     <div className="product-card" key={idx}>
+                        {product.soldout === 1 ? (<div className="product-blur"></div>) : null}
+                        
                             <Link className='product-link' to={`/productpage/${product.id}`}> 
                                 <div>
-                                    <img src={process.env.PUBLIC_URL + product.imageUrl} alt={product.name} />
+                                    <img src={`${API_URL}/${product.imageUrl}`} alt={product.name} />
                                 </div>
                                 <div className="product-content">
                                     <div className="product-name"><span className='product-seller'>({product.seller})</span> {product.name}</div>
